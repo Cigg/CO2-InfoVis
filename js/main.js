@@ -4,8 +4,12 @@
 
 var energyData = {};
 var CO2Data = {};
+var pie;
 
-loadData(energyData, CO2Data);
+var dataLoaded = function() {
+  console.log(energyData);
+  console.log(CO2Data);
+  pie = new pie();
+}
 
-console.log(energyData);
-console.log(CO2Data);
+loadData(energyData, CO2Data, dataLoaded);
