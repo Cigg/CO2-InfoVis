@@ -317,3 +317,24 @@ body {
         page-break-after: avoid;
     }
 }
+
+/* =======================================================
+ * Our CSS
+ * ======================================================= */
+
+ body {
+    font-size: 12px;
+ }
+
+/* Needed for some reason. Cmon bootstrap */
+.container-fluid .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+polyline {
+    opacity: .3;
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+}
