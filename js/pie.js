@@ -8,9 +8,9 @@ function pie() {
     
   var pieDiv = $("#pie");
 
-  var margin = [30, 120, 10, 120],
-      width = pieDiv.width() - margin[1] - margin[3],
-      height = pieDiv.height() - margin[0] - margin[2],
+  var margin = {top: 40, right: 120, bottom: 10, left: 120},
+      width = pieDiv.width() - margin.right - margin.left,
+      height = pieDiv.height() - margin.top - margin.bottom,
   	radius = Math.min(width, height) / 2;
 
 
@@ -18,7 +18,7 @@ function pie() {
   console.log("width: " + width);
 
   var color = d3.scale.ordinal()
-      .range(color12);
+      .range(qualitativeColors);
 
   var arc = d3.svg.arc()
       .outerRadius(radius - 10)
@@ -34,10 +34,10 @@ function pie() {
       .value(function(d) { return d.value; });
 
   var svg = d3.select("#pie").append("svg")
-      .attr("width", width + margin[1] + margin[3])
-      .attr("height", height + margin[0] + margin[2])
+      .attr("width", width + margin.right + margin.left)
+      .attr("height", height + margin.top + margin.bottom)
     .append("g")
-      .attr("transform", "translate(" + (width / 2 + margin[1]) + "," + (height / 2 + margin[0]) + ")");
+      .attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
 
   svg.append("g")
     .attr("class", "slices");
@@ -45,8 +45,10 @@ function pie() {
     .attr("class", "labels");
   svg.append("g")
     .attr("class", "lines");
+  svg.append("g")
+    .attr("class", "title");
 
-  selectCountry("Uruguay");
+  selectCountry("Denmark");
 
   function selectCountry(country) {
     var countries = $.grep(CO2Data.SECTOR, function(c){ return c["Region/Country/Economy"] === country; });
@@ -66,12 +68,22 @@ function pie() {
                   {"sector" : "Transport", "value" : niceNumber(countryData["Transport"])},
                   {"sector" : "Residential", "value" : niceNumber(countryData["of which: residential"])},
                   {"sector" : "Other", "value" : niceNumber(countryData["Other sectors"]) - niceNumber(countryData["of which: residential"])}];
+
     
-    draw(data);
+    draw(country, data);
   }
 
-  function draw(data) {
+  function draw(country, data) {
+    // Title
+    svg.select(".title")
+        .append("text")
+        .attr("x", 0)             
+        .attr("y", - height / 2 - 14)
+        .attr("text-anchor", "middle")  
+        .attr("class", "title")
+        .text(country);
 
+    // Pie slices
     var slice = svg.select(".slices").selectAll("path.slice")
       .data(pie(data));
 
