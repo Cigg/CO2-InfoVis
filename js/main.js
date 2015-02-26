@@ -15,6 +15,7 @@ var dataLoaded = function() {
   console.log(CO2Data);
   pie = new pie();
   map = new map();
+  area = new area();
 }
 
 loadData(energyData, CO2Data, dataLoaded);

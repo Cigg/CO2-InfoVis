@@ -3,7 +3,9 @@
 // Declutters the main js file
 // -----------------------------------------
 
-//Load all data and store it in the parameter variables
+// -----------------------------------------
+// Load all data and store it in the parameter variables
+// -----------------------------------------
 function loadData(energyData, CO2Data, callback) {
 
 	var thingsToLoad = 9;
@@ -69,7 +71,100 @@ function loadData(energyData, CO2Data, callback) {
 	});
 }
 
+// -----------------------------------------
 // Remove unnecessary stuff from a number (string)
+// -----------------------------------------
 function niceNumber(number) {
 	return parseFloat(number.replace(/ /g, ''));
+}
+
+// -----------------------------------------
+// Finds the X domain in an array
+// This is based on the energyData array from main
+// Used like this: x.domain(findXDomain(data));
+// Array structure:
+//
+// array[]
+//		object{}
+//			name
+//			values[]
+//
+// -----------------------------------------
+function findXDomain(arr) {
+    var lastYear = arr[0].values.length;
+    return [arr[0].values[0].year, arr[0].values[lastYear-1].year];
+}
+
+// -----------------------------------------
+// Finds the Y domain in an array
+// This is based on the energyData array from main
+// Used like this: y.domain(findYDomain(data));
+// Array structure:
+//
+// array[]
+//		object{}
+//			name
+//			values[]
+//
+// -----------------------------------------
+function findYDomain(arr) {
+    var minTotal = 0;
+    var maxTotal = 0;
+
+    for(var j = 0; j < arr.length; j++){
+        var min = 0;
+        var max = 0;
+
+        for(var i = 0; i < arr[j].values.length; i++) {
+            var temp = arr[j].values[i].y;
+            if(temp > max)
+                max = temp;
+            if(temp < min)
+                min = temp;
+        }
+
+        minTotal += min;
+        maxTotal += max;
+    }
+
+    return [minTotal,maxTotal];
+}
+
+// -----------------------------------------
+// Returns an object containing data type name and formatted values
+// Used like this: data[0] = getEnergyData("Electricity production from coal sources (kWh)", country);
+// Returned object's structure:
+//
+// object {}
+// 		name
+//		values[]
+//
+// -----------------------------------------
+function getEnergyData(dataKind, country) {
+    var countryCode;
+
+    for(var d in energyData[dataKind]){
+        var tempName = energyData[dataKind][d]["Country Name"];
+        if( country == tempName) {
+            countryCode = d;
+            console.log(country + ": " + countryCode);
+            break;
+        }
+    }
+
+    var countryData = energyData[dataKind][countryCode];
+    var data = new Object();
+    data.values = new Array();
+    data.name = dataKind;
+
+    for(var d in countryData){
+        if(!isNaN(d)){
+            if(isNaN(parseInt(countryData[d])))
+                data.values.push({year:parseInt(d), y:0});
+            else
+                data.values.push({year:parseInt(d), y:parseInt(countryData[d])});
+        }
+    }
+
+    return data;
 }
