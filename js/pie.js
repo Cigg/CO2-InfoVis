@@ -55,7 +55,7 @@ function pie() {
       .attr("y", - height / 2 - 14)
       .attr("text-anchor", "middle")  
       .attr("class", "title")
-      .text("");
+      .text("CO2 emissions - Sector");
 
   this.selectCountry = function(country) {
     var countries = $.grep(CO2Data.SECTOR, function(c){ return c["Region/Country/Economy"] === country; });
@@ -70,16 +70,32 @@ function pie() {
       return;
     }
 
-    var data = [  {"sector": "Electr. and heat", "value": niceNumber(countryData["Electricity and heat production"]), "percentage" : 10},
-                  {"sector": "Industries", "value": niceNumber(countryData["Manuf. industries \nand construction"]) + niceNumber(countryData["Other energy \nindustries**"]), "percentage" : 10},
-                  {"sector" : "Transport", "value" : niceNumber(countryData["Transport"]), "percentage" : 10},
-                  {"sector" : "Residential", "value" : niceNumber(countryData["of which: residential"]), "percentage" : 10},
-                  {"sector" : "Other", "value" : niceNumber(countryData["Other sectors"]) - niceNumber(countryData["of which: residential"]), "percentage" : 10}];
+    var totalEmissions =  niceNumber(countryData["Electricity and heat production"]) + 
+                          niceNumber(countryData["Manuf. industries \nand construction"]) + 
+                          niceNumber(countryData["Other energy \nindustries**"]) +
+                          niceNumber(countryData["Transport"]) +
+                          niceNumber(countryData["Other sectors"]);
 
-    drawText(country);
+    var data = [  {"sector" : "Electr. and heat",
+                    "value" : niceNumber(countryData["Electricity and heat production"]),
+                    "percentage" :  Math.round(100*niceNumber(countryData["Electricity and heat production"])/totalEmissions) + "%"},
+                  {"sector" : "Industries",
+                   "value" : niceNumber(countryData["Manuf. industries \nand construction"]) + niceNumber(countryData["Other energy \nindustries**"]),
+                   "percentage" : Math.round(100*(niceNumber(countryData["Manuf. industries \nand construction"]) +  niceNumber(countryData["Other energy \nindustries**"]))/totalEmissions) + "%"},
+                  {"sector" : "Transport",
+                   "value" : niceNumber(countryData["Transport"]),
+                   "percentage" : Math.round(100*niceNumber(countryData["Transport"])/totalEmissions) + "%"},
+                  {"sector" : "Residential",
+                   "value" : niceNumber(countryData["of which: residential"]),
+                   "percentage" : Math.round(100*niceNumber(countryData["of which: residential"])/totalEmissions) + "%"},
+                  {"sector" : "Other",
+                   "value" : niceNumber(countryData["Other sectors"]) - niceNumber(countryData["of which: residential"]),
+                   "percentage" : Math.round(100*(niceNumber(countryData["Other sectors"]) - niceNumber(countryData["of which: residential"]))/totalEmissions) + "%"}];
+
     draw(country, data);
   }
 
+/*
   function drawText(country) {
     title
       .transition().duration(1000/2)
@@ -88,26 +104,19 @@ function pie() {
       .style("opacity", 1)
       .text(country);
   }
-
+*/
   function draw(country, data) { 
     // Pie slices
-    var g = svg.select(".slices").selectAll("slice")
-      .data(pie(data))
-      .enter().append("g")
+    var slice = svg.select(".slices").selectAll("path.slice")
+      .data(pie(data));
+
+    slice.enter()
+      .insert("path")
+      .style("fill", function(d) { return color(d.data.sector); })
       .attr("class", "slice");
 
-    g.append("path")
-      .attr("d", arc)
-      .style("fill", function(d) { return color(d.data.sector); });
-      //.attr("class", "slice");
-
-    g.append("text")
-      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-      .attr("dy", ".35em")
-      .style("text-anchor", "middle")
-      .text(function(d) { return d.data.percentage + "%"; });
-
-    g.transition().duration(1000)
+    slice
+      .transition().duration(1000)
       .attrTween("d", function(d) {
         this._current = this._current || d;
         var interpolate = d3.interpolate(this._current, d);
@@ -117,7 +126,31 @@ function pie() {
         }
       })
 
-    //slice.remove();
+    slice.exit().remove();
+
+    // Pie slice percentage
+    var percentage = svg.select(".slices").selectAll("text")
+      .data(pie(data));
+
+    percentage.enter()
+      .append("text")
+      .attr("dy", ".35em")
+      .style("text-anchor", "middle");
+
+    percentage
+      .transition().duration(1000)
+      .attrTween("transform", function(d) {
+        this._current = this._current || d;
+        var interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function(t) {
+          var d2 = interpolate(t)
+          return "translate(" + arc.centroid(d2) + ")";
+        }
+      })
+      .text(function(d) { return d.data.percentage; });
+
+    percentage.exit().remove();
 
     // Text labels
     var text = svg.select(".labels")
