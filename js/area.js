@@ -89,7 +89,6 @@ function area() {
                 .duration(250)
                 .style({opacity:'0.83'})
 
-            console.log(d);
             tooltip.text(d.name);
             tooltip.style("visibility", "visible");
         })
