@@ -84,6 +84,7 @@ function niceNumber(number) {
 // Finds the X domain in an array
 // This is based on the energyData array from main
 // Used like this: x.domain(findXDomain(data));
+//
 // Array structure:
 //
 // array[]
@@ -93,14 +94,18 @@ function niceNumber(number) {
 //
 // -----------------------------------------
 function findXDomain(arr) {
-    var lastYear = arr[0].values.length;
-    return [arr[0].values[0].year, arr[0].values[lastYear-1].year];
+	console.log(arr);
+    var lastYear = arr[0].values[arr[0].values.length-1].year;
+    var firstYear = arr[0].values[0].year;
+
+    return [firstYear, lastYear];
 }
 
 // -----------------------------------------
 // Finds the Y domain in an array
 // This is based on the energyData array from main
 // Used like this: y.domain(findYDomain(data));
+//
 // Array structure:
 //
 // array[]
@@ -135,6 +140,7 @@ function findYDomain(arr) {
 // -----------------------------------------
 // Returns an object containing data type name and formatted values
 // Used like this: data[0] = getEnergyData("Electricity production from coal sources (kWh)", country);
+//
 // Returned object's structure:
 //
 // object {}
@@ -160,9 +166,7 @@ function getEnergyData(dataKind, country) {
 
     for(var d in countryData){
         if(!isNaN(d)){
-            if(isNaN(parseInt(countryData[d])))
-                data.values.push({year:parseInt(d), y:0});
-            else
+            if(!isNaN(parseInt(countryData[d])))
                 data.values.push({year:parseInt(d), y:parseInt(countryData[d])});
         }
     }

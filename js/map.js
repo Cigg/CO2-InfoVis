@@ -85,7 +85,6 @@ function map() {
                     .duration(250)
                     .style({opacity:'0.83'})
 
-                console.log(d);
                 tooltip.text(d.properties.name);
                 tooltip.style("visibility", "visible");
             })
@@ -119,5 +118,7 @@ function map() {
     // Method for selecting features of other components
     function selFeature(value) {
         pie.selectCountry(value);
+        CO2.selectCountry(value);
+        area.selectCountry(value);
     }
 }
