@@ -77,6 +77,12 @@ function loadData(energyData, CO2Data, callback) {
 function niceNumber(number) {
 	number = number.replace(/-/, '0');
 	number = number.replace(/ /g, '')
+	
+	var array = number.split('E+');
+	if(array.length > 1) {
+		number = parseFloat(array[0])*Math.pow(10, array[1]);
+	}
+
 	return parseFloat(number);
 }
 
@@ -167,7 +173,7 @@ function getEnergyData(dataKind, country) {
     for(var d in countryData){
         if(!isNaN(d)){
             if(!isNaN(parseInt(countryData[d])))
-                data.values.push({year:parseInt(d), y:parseInt(countryData[d])});
+                data.values.push({year:parseInt(d), y:parseInt(niceNumber(countryData[d]))});
         }
     }
 
