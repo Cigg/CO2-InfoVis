@@ -118,5 +118,7 @@ function map() {
     // Method for selecting features of other components
     function selFeature(value) {
         pie.selectCountry(value);
+        CO2.selectCountry(value);
+        area.selectCountry(value);
     }
 }
