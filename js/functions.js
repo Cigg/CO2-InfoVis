@@ -149,7 +149,6 @@ function getEnergyData(dataKind, country) {
         var tempName = energyData[dataKind][d]["Country Name"];
         if( country == tempName) {
             countryCode = d;
-            console.log(country + ": " + countryCode);
             break;
         }
     }

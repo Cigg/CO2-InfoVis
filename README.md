@@ -6,5 +6,5 @@ This is a project in the course TNM048, Information Visualization, at Linköping
 * [CO2 Emissions](http://visualizing.org/datasets/carbon-dioxide-emissions-fuel-combustion)
 
 ## Contributors
-* Oscar Westberg
-* Mikael Zackrisson
+* [Oscar Westberg](https://github.com/oscarwestberg)
+* [Mikael Zackrisson](https://github.com/Cigg)
