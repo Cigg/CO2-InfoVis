@@ -34,7 +34,7 @@ function CO2() {
     // -----------------------------------------
 
     this.selectCountry = function(country) {
-        var data = new Array();
+        data = new Array();
 
         // Load years and values into data array for the correct country
         for(d in CO2Data["CO2POP"]){
@@ -54,7 +54,7 @@ function CO2() {
     // Render
     // -----------------------------------------
 
-    function draw(data) {
+    function draw() {
         // Define the line
         var valueline = d3.svg.line()
             .x(function(d) { return x(d.year); })
@@ -87,6 +87,42 @@ function CO2() {
             .attr("class", "aAxis")
             .attr("transform", "translate(0,0)")
             .call(yAxis);
+
+        focus = svg.append("g")
+            .attr("class", "focus");
+
+        focus.append("line")
+            .attr("class", "x")
+            .attr("y1", 0)
+            .attr("y2", y(0));
+    }
+
+    this.mouseover = function () {
+        focus.select(".x").attr("style", "stroke:orange;");
+    }
+
+    this.mousemove = function (pos, domain) {
+        var areaWidth = $("#area").width() - 20 - 35;
+        var position = pos/areaWidth;
+        var year = (domain[1] - domain[0]) * position + domain[0];
+        var newPos;
+        var CO2Domain = d3.extent(data, function(d) { return d.year; });
+        
+
+        if(year > CO2Domain[1])
+            newPos = width;
+        else if(year < CO2Domain[0])
+            newPos = 0;
+        else {
+            var diff = (CO2Domain[1] - year)/(CO2Domain[1] - CO2Domain[0]);
+            newPos = (1 - diff) * width;
+        }   
+        
+        focus.select(".x").attr("transform", "translate(" + newPos + ",0)");
+    }
+
+    this.mouseout = function() {
+        focus.select(".x").attr("style", "stroke:none;");
     }
 
     this.selectCountry("World");
