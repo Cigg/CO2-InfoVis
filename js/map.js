@@ -28,7 +28,7 @@ function map() {
     // console.log(JSON.stringify(data));
 
     // width and height is based on container div size
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    var margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = mapDiv.width() - margin.right - margin.left,
         height = mapDiv.height() - margin.top - margin.bottom;
         scale = Math.min(width*0.16, height*0.3);
@@ -117,6 +117,7 @@ function map() {
 
     // Method for selecting features of other components
     function selFeature(value) {
+        selectCountry(value);
         pie.selectCountry(value);
         CO2.selectCountry(value);
         area.selectCountry(value);
