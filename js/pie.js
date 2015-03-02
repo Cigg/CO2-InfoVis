@@ -8,7 +8,7 @@ function pie() {
     
   var pieDiv = $("#pie");
 
-  var margin = {top: 40, right: 120, bottom: 10, left: 120},
+  var margin = {top: 40, right: 120, bottom: 20, left: 120},
       width = pieDiv.width() - margin.right - margin.left,
       height = pieDiv.height() - margin.top - margin.bottom,
   	radius = Math.min(width, height) / 2;
@@ -48,9 +48,16 @@ function pie() {
   svg.append("g")
     .attr("class", "title");
 
-  selectCountry("Denmark");
+  // Title
+  var title = svg.select(".title")
+      .append("text")
+      .attr("x", 0)             
+      .attr("y", - height / 2 - 14)
+      .attr("text-anchor", "middle")  
+      .attr("class", "title")
+      .text("");
 
-  function selectCountry(country) {
+  this.selectCountry = function(country) {
     var countries = $.grep(CO2Data.SECTOR, function(c){ return c["Region/Country/Economy"] === country; });
 
     if (countries.length == 0) {
@@ -63,37 +70,44 @@ function pie() {
       return;
     }
 
-    var data = [  {"sector": "Electr. and heat", "value": niceNumber(countryData["Electricity and heat production"])},
-                  {"sector": "Industries", "value": niceNumber(countryData["Manuf. industries \nand construction"]) + niceNumber(countryData["Other energy \nindustries**"])},
-                  {"sector" : "Transport", "value" : niceNumber(countryData["Transport"])},
-                  {"sector" : "Residential", "value" : niceNumber(countryData["of which: residential"])},
-                  {"sector" : "Other", "value" : niceNumber(countryData["Other sectors"]) - niceNumber(countryData["of which: residential"])}];
+    var data = [  {"sector": "Electr. and heat", "value": niceNumber(countryData["Electricity and heat production"]), "percentage" : 10},
+                  {"sector": "Industries", "value": niceNumber(countryData["Manuf. industries \nand construction"]) + niceNumber(countryData["Other energy \nindustries**"]), "percentage" : 10},
+                  {"sector" : "Transport", "value" : niceNumber(countryData["Transport"]), "percentage" : 10},
+                  {"sector" : "Residential", "value" : niceNumber(countryData["of which: residential"]), "percentage" : 10},
+                  {"sector" : "Other", "value" : niceNumber(countryData["Other sectors"]) - niceNumber(countryData["of which: residential"]), "percentage" : 10}];
 
-    
+    drawText(country);
     draw(country, data);
   }
 
-  function draw(country, data) {
-    // Title
-    svg.select(".title")
-        .append("text")
-        .attr("x", 0)             
-        .attr("y", - height / 2 - 14)
-        .attr("text-anchor", "middle")  
-        .attr("class", "title")
-        .text(country);
+  function drawText(country) {
+    title
+      .transition().duration(1000/2)
+      .style("opacity", 0)
+      .transition().duration(1000/2)
+      .style("opacity", 1)
+      .text(country);
+  }
 
+  function draw(country, data) { 
     // Pie slices
-    var slice = svg.select(".slices").selectAll("path.slice")
-      .data(pie(data));
-
-    slice.enter()
-      .insert("path")
-      .style("fill", function(d) { return color(d.data.sector); })
+    var g = svg.select(".slices").selectAll("slice")
+      .data(pie(data))
+      .enter().append("g")
       .attr("class", "slice");
 
-    slice
-      .transition().duration(1000)
+    g.append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color(d.data.sector); });
+      //.attr("class", "slice");
+
+    g.append("text")
+      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .style("text-anchor", "middle")
+      .text(function(d) { return d.data.percentage + "%"; });
+
+    g.transition().duration(1000)
       .attrTween("d", function(d) {
         this._current = this._current || d;
         var interpolate = d3.interpolate(this._current, d);
@@ -103,7 +117,7 @@ function pie() {
         }
       })
 
-    slice.exit().remove();
+    //slice.remove();
 
     // Text labels
     var text = svg.select(".labels")
@@ -166,4 +180,6 @@ function pie() {
 
     polyline.exit().remove();
   }
+
+  this.selectCountry("World");
 }

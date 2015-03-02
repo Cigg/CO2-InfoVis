@@ -35,8 +35,8 @@ function map() {
 
     // Create the svg area to draw in
     var svg = d3.select("#map").append("svg")
-    	.attr("width", width)
-    	.attr("height", height)
+        .attr("width", width)
+        .attr("height", height)
         .call(zoom);
 
     // The view in the map
@@ -47,8 +47,14 @@ function map() {
 
     // Draws edges in the map
     var path = d3.geo.path().projection(projection);
+
     // Create graphics variable
     g = svg.append("g");
+
+    //initialize tooltip
+    var tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip");
 
     // load data and draw the map
     d3.json("data/world-topo.json", function(error, world) {
@@ -72,16 +78,46 @@ function map() {
                 }
 
                 return 'gray';
+            })
+            .on('mouseover', function(d){
+                var nodeSelection = d3.select(this)
+                    .transition()
+                    .duration(250)
+                    .style({opacity:'0.83'})
+
+                console.log(d);
+                tooltip.text(d.properties.name);
+                tooltip.style("visibility", "visible");
+            })
+            .on('mouseout', function(d){
+                var nodeSelection = d3.select(this)
+                    .transition()
+                    .duration(250)
+                    .style({opacity:'1.0'});
+
+                 tooltip.style("visibility", "hidden");
+            })
+            .on("mousemove", function(){
+                tooltip.style("top", (event.pageY-10)+"px")
+                    .style("left",(event.pageX+10)+"px");
+            })
+            // Selection
+            .on("click", function(d) {
+                selFeature(d.properties.name);
             });
     };
 
-        //zoom and panning method
+    //zoom and panning method
     function move() {
         var t = d3.event.translate;
         var s = d3.event.scale;
 
         zoom.translate(t);
         g.style("stroke-width", 1 / s).attr("transform", "translate(" + t + ")scale(" + s + ")");
+    }
 
+    // Method for selecting features of other components
+    function selFeature(value) {
+        pie.selectCountry(value);
     }
 }

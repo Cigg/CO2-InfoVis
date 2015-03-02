@@ -75,7 +75,9 @@ function loadData(energyData, CO2Data, callback) {
 // Remove unnecessary stuff from a number (string)
 // -----------------------------------------
 function niceNumber(number) {
-	return parseFloat(number.replace(/ /g, ''));
+	number = number.replace(/-/, '0');
+	number = number.replace(/ /g, '')
+	return parseFloat(number);
 }
 
 // -----------------------------------------
