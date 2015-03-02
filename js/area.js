@@ -43,15 +43,12 @@ function area() {
 
     this.selectCountry = function(country) {
         console.log(country);
-        data = new Array();
+        var data = new Array();
         data[0] = getEnergyData("Electricity production from coal sources (kWh)", country);
         data[1] = getEnergyData("Electricity production from hydroelectric sources (kWh)", country);
         data[2] = getEnergyData("Electricity production from natural gas sources (kWh)", country);
         data[3] = getEnergyData("Electricity production from nuclear sources (kWh)", country);
         data[4] = getEnergyData("Electricity production from oil sources (kWh)", country);
-
-        x.domain(findXDomain(data));
-        y.domain(findYDomain(data));
 
         // Converts 2D data into stacked data, adding a y0 baseline
         var stack = d3.layout.stack().values(function(d) { return d.values; });
@@ -65,6 +62,9 @@ function area() {
     // -----------------------------------------
 
     function draw(data) {
+        x.domain(findXDomain(data));
+        y.domain(findYDomain(data));
+
         d3.select("#area svg").remove();
         var svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -110,6 +110,56 @@ function area() {
                 tooltip.style("top", (event.pageY-10)+"px")
                     .style("left",(event.pageX+10)+"px");
             })
+            .on("click", function(d){
+                drawOne(data, d.name);
+            }); 
+
+        svg.append("g")
+            .attr("class", "aAxis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "aAxis")
+            .attr("transform", "translate(0,0)")
+            .call(yAxis);
+    }
+
+    // Only draw one of the energy sources
+    function drawOne(data, dataType){
+        var i = 0;
+        for(i = 0; i < data.length; i++){
+            if(dataType == data[i].name){
+                break;
+            }
+        }
+
+        // Define the line
+        var valueline = d3.svg.line()
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.y); })
+            .interpolate("monotone");
+
+        // Scale the range of the data
+        x.domain(d3.extent(data[i].values, function(d) { return d.year; }));
+        y.domain([0, d3.max(data[i].values, function(d) { return d.y; })]);
+        //x.domain(findXDomain(data));
+
+        // Create the svg area to draw in
+        d3.select("#area svg").remove();
+        var svg = d3.select("#area").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Add the valueline path.
+        svg.append("path")
+            .attr("class", "line")
+            .attr("d", valueline(data[i].values))
+            .on("click", function(d){
+                draw(data);
+            }); 
 
         svg.append("g")
             .attr("class", "aAxis")
