@@ -143,7 +143,6 @@ function area() {
         // Scale the range of the data
         x.domain(d3.extent(data[i].values, function(d) { return d.year; }));
         y.domain([0, d3.max(data[i].values, function(d) { return d.y; })]);
-        //x.domain(findXDomain(data));
 
         // Create the svg area to draw in
         d3.select("#area svg").remove();
@@ -170,6 +169,23 @@ function area() {
             .attr("class", "aAxis")
             .attr("transform", "translate(0,0)")
             .call(yAxis);
+
+        // Handle vertical view
+        var focus = svg.append("g")
+            .attr("class", "focus");
+
+        focus.append("line")
+            .attr("class", "x")
+            .attr("y1", 0)
+            .attr("y2", y(0));
+
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mousemove", function() { CO2.mousemove(d3.mouse(this)[0], d3.extent(data[i].values, function(d) { return d.year; })); focus.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ",0)"); })
+            .on("mouseout", function() { CO2.mouseout(); focus.select(".x").attr("style", "stroke:none;"); })
+            .on("mouseover", function() { CO2.mouseover(); focus.select(".x").attr("style", "stroke:orange;"); });
     }
 
     this.selectCountry("World");

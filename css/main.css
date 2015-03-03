@@ -342,6 +342,15 @@ div.tooltip {
     cursor:pointer;
 }
 
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus line {
+  shape-rendering: crispEdges;
+}
+
 /* ==========================================================================
    For the CO2 view
    ========================================================================== */

@@ -21,8 +21,10 @@ var selectCountry = function(country) {
 
 var clearSelection = function() {
 	selectCountry("World");
-	pie.selectCountry("World");
-	area.selectCountry("World");
+	pie.selectCountry("World");	
+	selectCountry("World");
+    CO2.selectCountry("World");
+    area.selectCountry("World");
 }
 
 var dataLoaded = function() {
