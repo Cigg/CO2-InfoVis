@@ -37,6 +37,8 @@ function area() {
         .append("div")
         .attr("class", "tooltip");
 
+    var xDomain;
+
     // -----------------------------------------
     // Handle data
     // -----------------------------------------
@@ -64,8 +66,11 @@ function area() {
     function draw(data) {
         x.domain(findXDomain(data));
         y.domain(findYDomain(data));
+        xDomain = findXDomain(data);
 
+        // Remove any previous areas to make way for a new one
         d3.select("#area svg").remove();
+
         var svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -80,6 +85,24 @@ function area() {
             .y0(function(d) { return y(d.y0); })
             .y1(function(d) { return y((d.y0 + d.y)); })
             .interpolate("monotone");
+
+        // Used for handling displaying a vertical line when the user hovers outside the area graph
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mousemove", function() { 
+                CO2.mousemove(d3.mouse(this)[0], d3.extent(data[0].values, function(d) { return d.year; })); 
+                focus2.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ", 0)"); 
+            })
+            .on("mouseout", function() {                 
+                CO2.mouseout(); 
+                focus2.select(".x").attr("style", "stroke:none;"); 
+            })
+            .on("mouseover", function() {                 
+                CO2.mouseover(); 
+                focus2.select(".x").attr("style", "stroke:orange;"); 
+            });
 
         var graph = svg.selectAll(".graph")
             .data(data)
@@ -97,6 +120,10 @@ function area() {
 
                 tooltip.text(d.name);
                 tooltip.style("visibility", "visible");
+
+                // Update vertical line and synchronize with CO2 view
+                CO2.mouseover(); 
+                focus2.select(".x").attr("style", "stroke:orange;");
             })
             .on('mouseout', function(d){
                 var nodeSelection = d3.select(this)
@@ -105,15 +132,24 @@ function area() {
                     .style({opacity:'1.0'});
 
                  tooltip.style("visibility", "hidden");
+
+                // Update vertical line and synchronize with CO2 view
+                CO2.mouseout(); 
+                focus2.select(".x").attr("style", "stroke:none;");
             })
             .on("mousemove", function(){
                 tooltip.style("top", (event.pageY-10)+"px")
                     .style("left",(event.pageX+10)+"px");
+
+                // Update vertical line and synchronize with CO2 view
+                CO2.mousemove(d3.mouse(this)[0], d3.extent(data[0].values, function(d) { return d.year; })); 
+                focus2.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ", 0)");
             })
             .on("click", function(d){
                 drawOne(data, d.name);
             }); 
 
+        // Display axes
         svg.append("g")
             .attr("class", "aAxis")
             .attr("transform", "translate(0," + height + ")")
@@ -123,6 +159,15 @@ function area() {
             .attr("class", "aAxis")
             .attr("transform", "translate(0,0)")
             .call(yAxis);
+
+        // Add a vertical focus line
+        focus2 = svg.append("g")
+            .attr("class", "focus2");
+
+        focus2.append("line")
+            .attr("class", "x")
+            .attr("y1", 0)
+            .attr("y2", y(0));
     }
 
     // Only draw one of the energy sources
@@ -134,6 +179,9 @@ function area() {
             }
         }
 
+        // Remove any previous areas to make way for a new one
+        d3.select("#area svg").remove();
+
         // Define the line
         var valueline = d3.svg.line()
             .x(function(d) { return x(d.year); })
@@ -143,9 +191,9 @@ function area() {
         // Scale the range of the data
         x.domain(d3.extent(data[i].values, function(d) { return d.year; }));
         y.domain([0, d3.max(data[i].values, function(d) { return d.y; })]);
+        xDomain = findXDomain(data);
 
         // Create the svg area to draw in
-        d3.select("#area svg").remove();
         var svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -160,6 +208,7 @@ function area() {
                 draw(data);
             }); 
 
+        // Display axes
         svg.append("g")
             .attr("class", "aAxis")
             .attr("transform", "translate(0," + height + ")")
@@ -170,23 +219,71 @@ function area() {
             .attr("transform", "translate(0,0)")
             .call(yAxis);
 
-        // Handle vertical view
-        var focus = svg.append("g")
-            .attr("class", "focus");
+        // Add a vertical focus line
+        focus2 = svg.append("g")
+            .attr("class", "focus2");
 
-        focus.append("line")
+        focus2.append("line")
             .attr("class", "x")
             .attr("y1", 0)
             .attr("y2", y(0));
 
+        // Used for handling displaying the vertical line
         svg.append("rect")
             .attr("class", "overlay")
             .attr("width", width)
             .attr("height", height)
-            .on("mousemove", function() { CO2.mousemove(d3.mouse(this)[0], d3.extent(data[i].values, function(d) { return d.year; })); focus.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ",0)"); })
-            .on("mouseout", function() { CO2.mouseout(); focus.select(".x").attr("style", "stroke:none;"); })
-            .on("mouseover", function() { CO2.mouseover(); focus.select(".x").attr("style", "stroke:orange;"); });
+            .on("mousemove", function() { 
+                CO2.mousemove(d3.mouse(this)[0], d3.extent(data[i].values, function(d) { return d.year; })); 
+                focus2.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ",0)"); 
+            })
+            .on("mouseout", function() { 
+                CO2.mouseout(); 
+                focus2.select(".x").attr("style", "stroke:none;"); 
+            })
+            .on("mouseover", function() { 
+                CO2.mouseover(); 
+                focus2.select(".x").attr("style", "stroke:orange;"); 
+            });
     }
 
+    // -----------------------------------------
+    // Called from the CO2 view, updates vertical line
+    // -----------------------------------------
+
+    this.mouseover = function () {
+        focus2.select(".x").attr("style", "stroke:orange;");
+    }
+
+    // -----------------------------------------
+    // Called from the CO2 view, updates vertical line
+    // -----------------------------------------
+
+    this.mousemove = function (pos, domain) {
+        var CO2Width = $("#co2").width() - 20 - 35;
+        var position = pos/CO2Width;
+        var year = (domain[1] - domain[0]) * position + domain[0];
+
+        if(year > xDomain[1])
+            newPos = width;
+        else if(year < xDomain[0])
+            newPos = 0;
+        else {
+            var diff = (xDomain[1] - year)/(xDomain[1] - xDomain[0]);
+            newPos = (1 - diff) * width;
+        }
+
+        focus2.select(".x").attr("transform", "translate(" + newPos + ",0)");
+    }
+
+    // -----------------------------------------
+    // Called from the CO2 view, updates vertical line
+    // -----------------------------------------
+
+    this.mouseout = function() {
+        focus2.select(".x").attr("style", "stroke:none;");
+    }
+
+    // Initial view 
     this.selectCountry("World");
 }

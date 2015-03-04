@@ -42,12 +42,10 @@ function CO2() {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.append("g")
-        .attr("class", "title");
-
     svg.append("path")
         .attr("class", "line");
 
+    // Display axes
     svg.append("g")
         .attr("class", "x aAxis")
         .attr("transform", "translate(0," + height + ")");
@@ -56,11 +54,18 @@ function CO2() {
         .attr("class", "y aAxis")
         .attr("transform", "translate(0,0)");
 
-    var focus = svg.append("g")
+    // Handle focus bar
+    focus = svg.append("g")
         .attr("class", "focus");
 
+    focus.append("line")
+        .attr("class", "x")
+        .attr("y1", 0)
+        .attr("y2", y(0));
+
     // Title
-    var title = svg.select(".title")
+    svg.append("g")
+        .attr("class", "title")
         .append("text")
         .attr("x", 12)             
         .attr("y", 0)
@@ -86,8 +91,31 @@ function CO2() {
             }
         }
 
+        // Used for handling displaying the vertical line
+        // Must run after data is loaded, hence invoked here instead of during setup
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mousemove", function() { 
+                area.mousemove(d3.mouse(this)[0], d3.extent(data, function(d) { return d.year; })); 
+                focus.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ",0)"); 
+            })
+            .on("mouseout", function() { 
+                area.mouseout(); 
+                focus.select(".x").attr("style", "stroke:none;"); 
+            })
+            .on("mouseover", function() { 
+                area.mouseover(); 
+                focus.select(".x").attr("style", "stroke:orange;"); 
+            });
+
         update(data);
     }
+
+    // -----------------------------------------
+    // Update graph with new data to make a smooth transition
+    // -----------------------------------------
 
     function update(data) {
         // Scale the range of the data
@@ -98,16 +126,19 @@ function CO2() {
             t.select(".x.aAxis").call(xAxis);
             t.select(".y.aAxis").call(yAxis);
             t.select(".line").attr("d", valueline(data));
-
-        focus.append("line")
-            .attr("class", "x")
-            .attr("y1", 0)
-            .attr("y2", y(0));
     }
+
+    // -----------------------------------------
+    // Called from the area view, updates vertical line
+    // -----------------------------------------
 
     this.mouseover = function () {
         focus.select(".x").attr("style", "stroke:orange;");
     }
+
+    // -----------------------------------------
+    // Called from the area view, updates vertical line
+    // -----------------------------------------
 
     this.mousemove = function (pos, domain) {
         var areaWidth = $("#area").width() - 20 - 35;
@@ -129,9 +160,14 @@ function CO2() {
         focus.select(".x").attr("transform", "translate(" + newPos + ",0)");
     }
 
+    // -----------------------------------------
+    // Called from the area view, updates vertical line
+    // -----------------------------------------
+
     this.mouseout = function() {
         focus.select(".x").attr("style", "stroke:none;");
     }
 
+    // Initial view 
     this.selectCountry("World");
 }
