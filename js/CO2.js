@@ -29,6 +29,44 @@ function CO2() {
         .scale(y)
         .orient("left");
 
+    var valueline = d3.svg.line()
+        .x(function(d) { return x(d.year); })
+        .y(function(d) { return y(d.value); })
+        .interpolate("monotone");
+
+
+    // Setup svg components
+    var svg = d3.select("#co2").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("g")
+        .attr("class", "title");
+
+    svg.append("path")
+        .attr("class", "line");
+
+    svg.append("g")
+        .attr("class", "x aAxis")
+        .attr("transform", "translate(0," + height + ")");
+
+    svg.append("g")
+        .attr("class", "y aAxis")
+        .attr("transform", "translate(0,0)");
+
+    var focus = svg.append("g")
+        .attr("class", "focus");
+
+    // Title
+    var title = svg.select(".title")
+        .append("text")
+        .attr("x", 12)             
+        .attr("y", 0)
+        .attr("class", "title")
+        .text("CO2 emissions over time");
+
     // -----------------------------------------
     // Handle data
     // -----------------------------------------
@@ -47,49 +85,19 @@ function CO2() {
                 break;
             }
         }
-        draw(data);
+
+        update(data);
     }
 
-    // -----------------------------------------
-    // Render
-    // -----------------------------------------
-
-    function draw() {
-        // Define the line
-        var valueline = d3.svg.line()
-            .x(function(d) { return x(d.year); })
-            .y(function(d) { return y(d.value); })
-            .interpolate("monotone");
-
+    function update(data) {
         // Scale the range of the data
         x.domain(d3.extent(data, function(d) { return d.year; }));
         y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
-        // Create the svg area to draw in
-        d3.select("#co2 svg").remove();
-        var svg = d3.select("#co2").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // Add the valueline path.
-        svg.append("path")
-            .attr("class", "line")
-            .attr("d", valueline(data));
-
-        svg.append("g")
-            .attr("class", "aAxis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        svg.append("g")
-            .attr("class", "aAxis")
-            .attr("transform", "translate(0,0)")
-            .call(yAxis);
-
-        focus = svg.append("g")
-            .attr("class", "focus");
+        var t = svg.transition().duration(1000);
+            t.select(".x.aAxis").call(xAxis);
+            t.select(".y.aAxis").call(yAxis);
+            t.select(".line").attr("d", valueline(data));
 
         focus.append("line")
             .attr("class", "x")

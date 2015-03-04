@@ -2,20 +2,12 @@
 // Displays a pie chart of energy consumption per sector
 // ------------------------------------------------------
 function pie() {
-	console.log("pie");
-	//console.log("sector data: " + JSON.stringify(CO2Data.SECTOR));
-  //console.log("sector data, world: " + JSON.stringify(CO2Data.SECTOR[0]));
-    
   var pieDiv = $("#pie");
 
   var margin = {top: 40, right: 120, bottom: 20, left: 120},
       width = pieDiv.width() - margin.right - margin.left,
       height = pieDiv.height() - margin.top - margin.bottom,
   	radius = Math.min(width, height) / 2;
-
-
-  console.log("height: " + height);
-  console.log("width: " + width);
 
   var color = d3.scale.ordinal()
       .range(qualitativeColors);
@@ -36,7 +28,7 @@ function pie() {
   var svg = d3.select("#pie").append("svg")
       .attr("width", width + margin.right + margin.left)
       .attr("height", height + margin.top + margin.bottom)
-    .append("g")
+      .append("g")
       .attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
 
   svg.append("g")
@@ -55,7 +47,7 @@ function pie() {
       .attr("y", - height / 2 - 14)
       .attr("text-anchor", "middle")  
       .attr("class", "title")
-      .text("CO2 emissions - Sector");
+      .text("CO2 emissions by sector");
 
   this.selectCountry = function(country) {
     var countries = $.grep(CO2Data.SECTOR, function(c){ return c["Region/Country/Economy"] === country; });
