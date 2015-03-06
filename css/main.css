@@ -355,8 +355,13 @@ div.tooltip {
   pointer-events: all;
 }
 
-.focus line {
+.focus line, .focus2 line {
   shape-rendering: crispEdges;
+  pointer-events: none;
+}
+
+#back-button {
+    margin-top: 10px;
 }
 
 /* ==========================================================================
