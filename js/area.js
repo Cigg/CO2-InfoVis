@@ -70,6 +70,7 @@ function area() {
 
         // Remove any previous areas to make way for a new one
         d3.select("#area svg").remove();
+        d3.select("#back-button").remove();
 
         var svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -181,6 +182,12 @@ function area() {
 
         // Remove any previous areas to make way for a new one
         d3.select("#area svg").remove();
+
+        // Add back button
+        $("#toolbar-middle").append('<button id="back-button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> Back</button>')
+        $("#back-button").click(function() {
+            draw(data);
+        });
 
         // Define the line
         var valueline = d3.svg.line()
