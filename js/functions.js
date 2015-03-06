@@ -179,3 +179,9 @@ function getEnergyData(dataKind, country) {
 
     return data;
 }
+
+function reverseArray(array){
+  var reversedArray = Array.prototype.slice.call(array);
+  reversedArray.reverse();
+  return reversedArray;
+}
