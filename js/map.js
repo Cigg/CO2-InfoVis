@@ -57,6 +57,13 @@ function map() {
             return 'translate(' + 0 + ',' + vert + ')';
         });
 
+    // White background
+    legend.append('rect')
+        .attr('width', 100)
+        .attr('height', legendRectSize  + legendSpacing)
+        .style('fill', 'white');
+
+    // Colored square
     legend.append('rect')
         .attr('width', legendRectSize)
         .attr('height', legendRectSize)
