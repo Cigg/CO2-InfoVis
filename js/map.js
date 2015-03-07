@@ -10,13 +10,16 @@ function map() {
     var mapDiv = $("#map");
 
     var quantize = d3.scale.quantize()
-        .domain([0, d3.max(CO2Data.CO2POP, function(d) {
-            if(!isNaN(d["2008"]))
-                return d["2008"];
+        .domain(d3.extent(CO2Data.CO2POP, function(d) {
+            if(!isNaN(d["2008"])) {
+                return parseFloat(d["2008"]);
+            }
             else
                 return 0;
-        })])
+        }))
         .range(sequentialColors);
+
+    console.log("quantize: domain: " + quantize.domain());
 
     // width and height is based on container div size
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
@@ -44,7 +47,7 @@ function map() {
 
     // Create legend
     var legendRectSize = 18;
-    var legendSpacing = 4;
+    var legendSpacing = 6;
 
     var legend = svg.selectAll('.legend')
         .data(reverseArray(quantize.range()))
@@ -72,7 +75,7 @@ function map() {
 
     legend.append('text')
         .attr('x', legendRectSize + legendSpacing + 10)
-        .attr('y', legendRectSize + legendSpacing - 8)
+        .attr('y', legendRectSize + legendSpacing - 10)
         .text(function(d) {
             var extent = quantize.invertExtent(d);
             return parseFloat(extent[0]).toFixed(2) + ' - ' + parseFloat(extent[1]).toFixed(2);
