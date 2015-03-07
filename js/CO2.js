@@ -30,7 +30,8 @@ function CO2() {
 
     var yAxis = d3.svg.axis()
         .scale(y)
-        .orient("left");
+        .orient("left")
+        .tickFormat(d3.format("s"));
 
     var valueline = d3.svg.line()
         .x(function(d) { return x(d.year); })
