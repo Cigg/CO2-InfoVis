@@ -100,7 +100,6 @@ function niceNumber(number) {
 //
 // -----------------------------------------
 function findXDomain(arr) {
-	console.log(arr);
     var lastYear = arr[0].values[arr[0].values.length-1].year;
     var firstYear = arr[0].values[0].year;
 

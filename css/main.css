@@ -304,6 +304,14 @@ polyline {
 .q7-9 { fill:rgb(8,81,156); }
 .q8-9 { fill:rgb(8,48,107); }
 
+.toolbar-middle {
+    padding-top: 10px;
+}
+
+#left-button {
+    margin-right: 5px;
+}
+
 /* ==========================================================================
    For the map view
    ========================================================================== */
@@ -358,10 +366,6 @@ div.tooltip {
 .focus line, .focus2 line {
   shape-rendering: crispEdges;
   pointer-events: none;
-}
-
-#back-button {
-    margin-top: 10px;
 }
 
 /* ==========================================================================
