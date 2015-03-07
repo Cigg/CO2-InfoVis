@@ -18,15 +18,6 @@ function map() {
         })])
         .range(sequentialColors);
 
-    //console.log(JSON.stringify(CO2Data.CO2POP));
-
-    // var data = []
-    // for(country in CO2Data.CO2POP) {
-    //     data.push({"country" : CO2Data.CO2POP[country]["Region/Country/Economy"], "2008" : niceNumber(CO2Data.CO2POP[country]["2008"])})
-    // }
-
-    // console.log(JSON.stringify(data));
-
     // width and height is based on container div size
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = mapDiv.width() - margin.right - margin.left,
@@ -51,6 +42,42 @@ function map() {
     // Create graphics variable
     g = svg.append("g");
 
+    // Create legend
+    var legendRectSize = 18;
+    var legendSpacing = 4;
+
+    var legend = svg.selectAll('.legend')
+        .data(reverseArray(quantize.range()))
+        .enter()
+        .append('g')
+        .attr('class', 'legend')
+        .attr('transform', function(d, i) {
+            var height = legendRectSize + legendSpacing;
+            var vert = i * height;
+            return 'translate(' + 0 + ',' + vert + ')';
+        });
+
+    // White background
+    legend.append('rect')
+        .attr('width', 100)
+        .attr('height', legendRectSize  + legendSpacing)
+        .style('fill', 'white');
+
+    // Colored square
+    legend.append('rect')
+        .attr('width', legendRectSize)
+        .attr('height', legendRectSize)
+        .style('fill', function(d) { return d;})
+        .style('stroke', sequentialColors);
+
+    legend.append('text')
+        .attr('x', legendRectSize + legendSpacing + 10)
+        .attr('y', legendRectSize + legendSpacing - 8)
+        .text(function(d) {
+            var extent = quantize.invertExtent(d);
+            return parseFloat(extent[0]).toFixed(2) + ' - ' + parseFloat(extent[1]).toFixed(2);
+        });
+
     //initialize tooltip
     var tooltip = d3.select("body")
         .append("div")
@@ -71,15 +98,12 @@ function map() {
             .attr("d", path)
             .attr("fill", function(d) {
                 var countries = $.grep(CO2Data.CO2POP, function(c){ return c["Region/Country/Economy"] === d.properties.name; });
-                if(countries.length == 1)
-                {
-                    //console.log(quantize(countries[0]["2008"]));
+                if(countries.length == 1) {
                     return quantize(countries[0]["2008"]);
                 }
-
                 return 'gray';
             })
-            .on('mouseover', function(d){
+            .on('mouseover', function(d) {
                 var nodeSelection = d3.select(this)
                     .transition()
                     .duration(250)
@@ -88,7 +112,7 @@ function map() {
                 tooltip.text(d.properties.name);
                 tooltip.style("visibility", "visible");
             })
-            .on('mouseout', function(d){
+            .on('mouseout', function(d) {
                 var nodeSelection = d3.select(this)
                     .transition()
                     .duration(250)
@@ -96,7 +120,7 @@ function map() {
 
                  tooltip.style("visibility", "hidden");
             })
-            .on("mousemove", function(){
+            .on("mousemove", function() {
                 tooltip.style("top", (event.pageY-10)+"px")
                     .style("left",(event.pageX+10)+"px");
             })
