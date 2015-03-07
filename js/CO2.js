@@ -8,11 +8,14 @@ function CO2() {
     // Initial setup
     // -----------------------------------------
 
+    var mode = 1;
+    var storedCountry;
+
     // Grab the CO2 div with jquery
     var CO2Div = $("#co2");
 
     // width and height is based on container div size
-    var margin = {top: 20, right: 20, bottom: 20, left: 35},
+    var margin = {top: 20, right: 20, bottom: 40, left: 50},
         width = CO2Div.width() - margin.right - margin.left,
         height = CO2Div.height() - margin.top - margin.bottom;
 
@@ -63,29 +66,51 @@ function CO2() {
         .attr("y1", 0)
         .attr("y2", y(0));
 
-    // Title
-    svg.append("g")
-        .attr("class", "title")
-        .append("text")
-        .attr("x", 12)             
-        .attr("y", 0)
-        .attr("class", "title")
-        .text("CO2 emissions over time");
+    // Axis labels
+    svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width)
+        .attr("y", height + 30)
+        .text("Time");
+
+    svg.append("text")
+        .attr("class", "y label CO2")
+        .attr("text-anchor", "end")
+        .attr("y", - 45)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Total CO2 emission (M tonnes)");
 
     // -----------------------------------------
     // Handle data
     // -----------------------------------------
 
     this.selectCountry = function(country) {
+        storedCountry = country;
         data = new Array();
+        var type;
+
+        // Handle button appearance
+        if( mode == 1 ) {
+            type = "CO2SA";
+            $("#right-button").html("Change to CO2 emission per capita");
+            svg.selectAll("text.y.label.CO2").text("Total CO2 emission (M tonnes)");
+            
+        } else {
+            type = "CO2POP";
+            $("#right-button").html("Change to total CO2 emission");
+            //Tonnes
+            svg.selectAll("text.y.label.CO2").text("CO2 emission per capita (tonnes)");
+        }
 
         // Load years and values into data array for the correct country
-        for(d in CO2Data["CO2POP"]){
-            if(CO2Data["CO2POP"][d]["Region/Country/Economy"] == country){
-                for(e in CO2Data["CO2POP"][d]) {
+        for(d in CO2Data[type]){
+            if(CO2Data[type][d]["Region/Country/Economy"] == country){
+                for(e in CO2Data[type][d]) {
                     // Only push data values, not the country string
-                    if(!isNaN(parseFloat(CO2Data["CO2POP"][d][e])))
-                        data.push({ year: parseInt(e), value: parseFloat(CO2Data["CO2POP"][d][e]) })
+                    if(!isNaN(parseFloat(CO2Data[type][d][e])))
+                        data.push({ year: parseInt(e), value: parseFloat(CO2Data[type][d][e]) })
                 }
                 break;
             }
@@ -141,7 +166,8 @@ function CO2() {
     // -----------------------------------------
 
     this.mousemove = function (pos, domain) {
-        var areaWidth = $("#area").width() - 20 - 35;
+        // Assume the two views have the same margins
+        var areaWidth = $("#area").width() - margin.left - margin.right;
         var position = pos/areaWidth;
         var year = (domain[1] - domain[0]) * position + domain[0];
         var newPos;
@@ -166,6 +192,16 @@ function CO2() {
 
     this.mouseout = function() {
         focus.select(".x").attr("style", "stroke:none;");
+    }
+
+    // -----------------------------------------
+    // Switches between displaying CO2POP and CO2SA in the y-axis
+    // -----------------------------------------
+
+    this.changeMode = function() {
+        mode = mode == 1 ? 0 : 1;
+
+        this.selectCountry(storedCountry);
     }
 
     // Initial view 

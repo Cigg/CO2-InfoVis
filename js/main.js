@@ -13,6 +13,14 @@ $("#clear-button").click(function() {
 	clearSelection();
 });
 
+$("#left-button").click(function() {
+	clearSelection();
+});
+
+$("#right-button").click(function() {
+	CO2.changeMode();
+});
+
 var selectCountry = function(country) {
 	$("#selection > .country").remove();
 	$("#selection").append('<div class="toolbar-item country"><strong class="btn btn-info">' + country + '</strong></div>');
@@ -28,6 +36,8 @@ var clearSelection = function() {
 
 // Create modules when data is loaded
 var dataLoaded = function() {
+  console.log(energyData);
+  console.log(CO2Data);
   pie = new pie();
   area = new area();
   CO2 = new CO2();

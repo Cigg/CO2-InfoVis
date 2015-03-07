@@ -14,7 +14,7 @@ function area() {
     var areaDiv = $("#area");
 
     // width and height is based on container div size
-    var margin = {top: 20, right: 20, bottom: 20, left: 35},
+    var margin = {top: 20, right: 20, bottom: 40, left: 50},
         width = areaDiv.width() - margin.right - margin.left,
         height = areaDiv.height() - margin.top - margin.bottom;
 
@@ -44,7 +44,6 @@ function area() {
     // -----------------------------------------
 
     this.selectCountry = function(country) {
-        console.log(country);
         var data = new Array();
         data[0] = getEnergyData("Electricity production from coal sources (kWh)", country);
         data[1] = getEnergyData("Electricity production from hydroelectric sources (kWh)", country);
@@ -169,6 +168,22 @@ function area() {
             .attr("class", "x")
             .attr("y1", 0)
             .attr("y2", y(0));
+
+        // Axis labels
+        svg.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height + 30)
+            .text("Time");
+
+        svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", - 50)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("Electricity production from all sources (kWh)");
     }
 
     // Only draw one of the energy sources
@@ -184,7 +199,7 @@ function area() {
         d3.select("#area svg").remove();
 
         // Add back button
-        $("#toolbar-middle").append('<button id="back-button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> Back</button>')
+        $("#left-button").after('<button id="back-button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> Back</button>')
         $("#back-button").click(function() {
             draw(data);
         });
@@ -252,6 +267,22 @@ function area() {
                 CO2.mouseover(); 
                 focus2.select(".x").attr("style", "stroke:orange;"); 
             });
+
+        // Axis labels
+        svg.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height + 30)
+            .text("Time");
+
+        svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", - 50)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text(dataType);
     }
 
     // -----------------------------------------
@@ -267,7 +298,8 @@ function area() {
     // -----------------------------------------
 
     this.mousemove = function (pos, domain) {
-        var CO2Width = $("#co2").width() - 20 - 35;
+        // Assume the two views have the same margins
+        var CO2Width = $("#co2").width() - margin.right - margin.left;
         var position = pos/CO2Width;
         var year = (domain[1] - domain[0]) * position + domain[0];
 
