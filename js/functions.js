@@ -8,7 +8,7 @@
 // -----------------------------------------
 function loadData(energyData, CO2Data, callback) {
 
-	var thingsToLoad = 9;
+	var thingsToLoad = 10;
 
 	var thingLoaded = function() {
 		thingsToLoad--;
@@ -47,6 +47,11 @@ function loadData(energyData, CO2Data, callback) {
 
 	d3.csv("data/co2highlights _SECTPOP.csv", function(error, data){
 		CO2Data.SECTPOP = data;
+		thingLoaded();
+	});
+
+	d3.csv("data/co2highlights_CO2-GDP.csv", function(error, data){
+		CO2Data.CO2GDP = data;
 		thingLoaded();
 	});
 

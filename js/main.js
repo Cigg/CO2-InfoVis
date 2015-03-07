@@ -14,7 +14,7 @@ $("#clear-button").click(function() {
 });
 
 $("#left-button").click(function() {
-	clearSelection();
+	area.changeMode();
 });
 
 $("#right-button").click(function() {

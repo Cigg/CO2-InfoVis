@@ -10,6 +10,11 @@ function area() {
     // Initial setup
     // -----------------------------------------
 
+    var data, CO2GDPData;
+    var drawType = "Electricity";
+    var svg;
+    var valueline;
+
     // Grab the area div with jquery
     var areaDiv = $("#area");
 
@@ -44,7 +49,7 @@ function area() {
     // -----------------------------------------
 
     this.selectCountry = function(country) {
-        var data = new Array();
+        data = new Array();
         data[0] = getEnergyData("Electricity production from coal sources (kWh)", country);
         data[1] = getEnergyData("Electricity production from hydroelectric sources (kWh)", country);
         data[2] = getEnergyData("Electricity production from natural gas sources (kWh)", country);
@@ -55,14 +60,29 @@ function area() {
         var stack = d3.layout.stack().values(function(d) { return d.values; });
         stack(data);
 
-        draw(data);
+        // Loads an array with years and GDP/POP
+        CO2GDPData = new Array();
+        for(d in CO2Data["CO2GDP"]){
+            if(CO2Data["CO2GDP"][d]["Region/Country/Economy"] == country){
+                for(e in CO2Data["CO2GDP"][d]) {
+                    if(!isNaN(parseFloat(CO2Data["CO2GDP"][d][e])))
+                        CO2GDPData.push({ year: parseInt(e), value: parseFloat(CO2Data["CO2POP"][d][e]/CO2Data["CO2GDP"][d][e] * 1000) });
+                }
+                break;
+            }
+        }
+
+        if (drawType == "Electricity")
+            draw();
+        else 
+            updateGDP();
     }
 
     // -----------------------------------------
-    // Render
+    // Draw area graph
     // -----------------------------------------
 
-    function draw(data) {
+    function draw() {
         x.domain(findXDomain(data));
         y.domain(findYDomain(data));
         xDomain = findXDomain(data);
@@ -71,7 +91,7 @@ function area() {
         d3.select("#area svg").remove();
         d3.select("#back-button").remove();
 
-        var svg = d3.select("#area").append("svg")
+        svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -146,7 +166,7 @@ function area() {
                 focus2.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ", 0)");
             })
             .on("click", function(d){
-                drawOne(data, d.name);
+                drawOne(d.name);
             }); 
 
         // Display axes
@@ -186,8 +206,11 @@ function area() {
             .text("Electricity production from all sources (kWh)");
     }
 
-    // Only draw one of the energy sources
-    function drawOne(data, dataType){
+    // -----------------------------------------
+    // Draw one of the energy sources
+    // -----------------------------------------
+
+    function drawOne(dataType){
         var i = 0;
         for(i = 0; i < data.length; i++){
             if(dataType == data[i].name){
@@ -205,7 +228,7 @@ function area() {
         });
 
         // Define the line
-        var valueline = d3.svg.line()
+        valueline = d3.svg.line()
             .x(function(d) { return x(d.year); })
             .y(function(d) { return y(d.y); })
             .interpolate("monotone");
@@ -216,7 +239,7 @@ function area() {
         xDomain = findXDomain(data);
 
         // Create the svg area to draw in
-        var svg = d3.select("#area").append("svg")
+        svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -225,10 +248,7 @@ function area() {
         // Add the valueline path.
         svg.append("path")
             .attr("class", "line")
-            .attr("d", valueline(data[i].values))
-            .on("click", function(d){
-                draw(data);
-            }); 
+            .attr("d", valueline(data[i].values));
 
         // Display axes
         svg.append("g")
@@ -283,6 +303,133 @@ function area() {
             .attr("dy", ".75em")
             .attr("transform", "rotate(-90)")
             .text(dataType);
+    }
+
+    // -----------------------------------------
+    // Draw GDP per capita
+    // -----------------------------------------
+
+    function drawGDP() {
+        // Remove any previous areas to make way for a new one
+        d3.select("#area svg").remove();
+        d3.select("#back-button").remove();
+
+        // Define the line
+        valueline = d3.svg.line()
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.value); })
+            .interpolate("monotone");
+
+        // Scale the range of the data
+        x.domain(d3.extent(CO2GDPData, function(d) { return d.year; }));
+        y.domain([0, d3.max(CO2GDPData, function(d) { return d.value; })]);
+
+        // Create the svg area to draw in
+        svg = d3.select("#area").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Add the valueline path.
+        svg.append("path")
+            .attr("class", "line")
+            .attr("d", valueline(CO2GDPData));
+
+        // Display axes
+        svg.append("g")
+            .attr("class", "x aAxis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y aAxis")
+            .attr("transform", "translate(0,0)")
+            .call(yAxis);
+
+        // Add a vertical focus line
+        focus2 = svg.append("g")
+            .attr("class", "focus2");
+
+        focus2.append("line")
+            .attr("class", "x")
+            .attr("y1", 0)
+            .attr("y2", y(0));
+
+        // Used for handling displaying the vertical line
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mousemove", function() { 
+                CO2.mousemove(d3.mouse(this)[0], d3.extent(CO2GDPData, function(d) { return d.year; })); 
+                focus2.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ",0)"); 
+            })
+            .on("mouseout", function() { 
+                CO2.mouseout(); 
+                focus2.select(".x").attr("style", "stroke:none;"); 
+            })
+            .on("mouseover", function() { 
+                CO2.mouseover(); 
+                focus2.select(".x").attr("style", "stroke:orange;"); 
+            });
+
+        // Axis labels
+        svg.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height + 30)
+            .text("Time");
+
+        svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", - 50)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("GDP per Capita ($)");
+    }
+
+    function updateGDP() {
+        // Scale the range of the data
+        x.domain(d3.extent(CO2GDPData, function(d) { return d.year; }));
+        y.domain([0, d3.max(CO2GDPData, function(d) { return d.value; })]);
+
+        var t = svg.transition().duration(1000);
+            t.select(".x.aAxis").call(xAxis);
+            t.select(".y.aAxis").call(yAxis);
+            t.select(".line").attr("d", valueline(CO2GDPData));
+
+        d3.select("rect").remove();
+        svg.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mousemove", function() { 
+                CO2.mousemove(d3.mouse(this)[0], d3.extent(CO2GDPData, function(d) { return d.year; })); 
+                focus2.select(".x").attr("transform", "translate(" + d3.mouse(this)[0] + ",0)"); 
+            })
+            .on("mouseout", function() { 
+                CO2.mouseout(); 
+                focus2.select(".x").attr("style", "stroke:none;"); 
+            })
+            .on("mouseover", function() { 
+                CO2.mouseover(); 
+                focus2.select(".x").attr("style", "stroke:orange;"); 
+            });
+    }
+
+    this.changeMode = function () {
+        if (drawType == "Electricity") {
+            drawType = "GDP";
+            $("#left-button").html("Change to Electricity production");
+            drawGDP();
+        } else {
+            drawType = "Electricity";
+            $("#left-button").html("Change to GDP per capita");
+            draw();
+        }
     }
 
     // -----------------------------------------
