@@ -71,6 +71,24 @@ function loadData(energyData, CO2Data, callback) {
 	});
 }
 
+function calcCO2delta(CO2Data) {
+	var array = [];
+	var startYear = 2000;
+	var endYear = 2008;
+	for(country in CO2Data.CO2POP) {
+		var val = 0;
+		for(year = startYear; year <= endYear; year++) {
+			val += CO2Data.CO2POP[country]["2008"] - CO2Data.CO2POP[country]["2007"];
+		}
+
+		val /= endYear - startYear;
+		array.push({ country: CO2Data.CO2POP[country]["Region/Country/Economy"], 
+						 value: val});
+	}
+
+	CO2Data.CHANGE = array;
+}
+
 // -----------------------------------------
 // Remove unnecessary stuff from a number (string)
 // -----------------------------------------

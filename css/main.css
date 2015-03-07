@@ -267,6 +267,10 @@ body {
     font-weight: bold;
 }
 
+.module {
+    /*border: 1px solid #EEE;*/
+}
+
 /* Needed for some reason. Cmon bootstrap */
 .container-fluid .row {
     margin-left: 0;
@@ -315,9 +319,13 @@ polyline {
 /* ==========================================================================
    For the map view
    ========================================================================== */
+.map {
+    background-color: #EEE;
+}
 
 .country {
     cursor:pointer;
+    stroke: white;
 }
 
 .legend {

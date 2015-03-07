@@ -94,12 +94,12 @@ function CO2() {
         // Handle button appearance
         if( mode == 1 ) {
             type = "CO2SA";
-            $("#right-button").html("Change to CO2 emission per capita");
+            $("#right-button").html("Change to per capita");
             svg.selectAll("text.y.label.CO2").text("Total CO2 emission (M tonnes)");
             
         } else {
             type = "CO2POP";
-            $("#right-button").html("Change to total CO2 emission");
+            $("#right-button").html("Change to total");
             //Tonnes
             svg.selectAll("text.y.label.CO2").text("CO2 emission per capita (tonnes)");
         }
