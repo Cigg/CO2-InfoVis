@@ -15,7 +15,7 @@ function CO2() {
     var CO2Div = $("#co2");
 
     // width and height is based on container div size
-    var margin = {top: 20, right: 20, bottom: 40, left: 50},
+    var margin = {top: 10, right: 15, bottom: 35, left: 50},
         width = CO2Div.width() - margin.right - margin.left,
         height = CO2Div.height() - margin.top - margin.bottom;
 
@@ -81,7 +81,7 @@ function CO2() {
         .attr("y", - 45)
         .attr("dy", ".75em")
         .attr("transform", "rotate(-90)")
-        .text("Total CO2 emission (M tonnes)");
+        .text("Total CO2 emissions (M tonnes)");
 
     // -----------------------------------------
     // Handle data
@@ -96,13 +96,15 @@ function CO2() {
         if( mode == 1 ) {
             type = "CO2SA";
             $("#right-button").html("Change to per capita");
-            svg.selectAll("text.y.label.CO2").text("Total CO2 emission (M tonnes)");
+            $("#co2-label").html("CO2 emissions over time (total)");
+            svg.selectAll("text.y.label.CO2").text("Total CO2 emissions (M tonnes)");
             
         } else {
             type = "CO2POP";
             $("#right-button").html("Change to total");
+            $("#co2-label").html("CO2 emissions over time (per capita)");
             //Tonnes
-            svg.selectAll("text.y.label.CO2").text("CO2 emission per capita (tonnes)");
+            svg.selectAll("text.y.label.CO2").text("CO2 emissions per capita (tonnes)");
         }
 
         // Load years and values into data array for the correct country

@@ -7,78 +7,78 @@
         <link rel="stylesheet" href="css/main.css">
     </head>
 
-    <body>
+    <body> 
+        <div id="tooltips"></div>
 
-        <div class="container-fluid">
+        
+            <div id="main-toolbar" class="toolbar">
+                <div class="toolbar-item">
+                    <button id="clear-button" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Clear selections
+                    </button>
+                </div>
+                <div id="selection">
+                    <div class="toolbar-item country"><strong class="btn btn-info">World</strong></div>
+                </div>
+            </div>
+
+            <!-- Modules -->
+            <div class="container-fluid">
             <!-- row of columns -->
-            <div class="row">
-
-                <!-- Selection buttons -->
-                <div class="col-xs-6">
-                    <div id="toolbar" style="height: 6vh;">
-                        <div class="toolbar-item">
-                            <button id="clear-button" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Clear selections
-                            </button>
-                        </div>
-                        <div id="selection">
-                            <div class="toolbar-item country"><strong class="btn btn-info">World</strong></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Map button -->
-                <div class="col-xs-6">
-                    <div id="toolbar" style="height: 6vh;">
-                        <div class="toolbar-item">
-                            <button id="map-button" type="button" class="btn btn-default"></button>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </div> <!-- /row -->
-
-            <div class="row">
+            <div class="row module-row">
 
                 <!-- Pie chart -->
                 <div class="col-xs-6 module">
-                    <div id="pie" style="height: 44vh;">
+                    <div class="row">
+                        <div class="toolbar">
+                            <h2 id="pie-label">CO2 emissions by sector 2008</h2>
+                        </div>
+                    </div>
+                    <div class="row module-content">
+                        <div id="pie"></div>
                     </div>
                 </div>
 
                 <!-- Map -->
                 <div class="col-xs-6 module">
+                    <!-- Map button -->
                     <div class="row">
-                        <div id="map" style="height: 38vh;"></div>
+                        <div class="toolbar">
+                            <h2 id="map-label">CO2 emissions 2008</h2>
+                            <button id="map-button" type="button" class="btn btn-default module-button"></button>
+                        </div>
+                    </div>
+                    <div class="row module-content">
+                        <div id="map"></div>
                     </div>
                 </div>
 
             </div> <!-- /row -->
 
-            <div class="row">
+            <div class="row module-row">
 
                 <!-- Area graph -->
                 <div class="col-xs-6 module">
                     <div class="row">
-                        <div class="module-toolbar" style="height: 6vh;">
-                            <button id="left-button" type="button" class="btn btn-default">Change to GDP per capita</button>
+                        <div id="area-toolbar" class="toolbar">
+                            <h2 id="area-label">Electricity production over time</h2>
                         </div>
                     </div>
-                    <div class="row">
-                        <div id="area" style="height: 42vh;"></div>
+                    <div class="row module-content">
+                        <div id="area"></div>
                     </div>
                 </div>
 
                 <!-- CO2 line graph -->
                 <div class="col-xs-6 module">
                     <div class="row">
-                        <div class="module-toolbar" style="height: 6vh;">
-                            <button id="right-button" type="button" class="btn btn-default">Change to per capita</button>
+                        <div class="toolbar">
+                            <h2 id="co2-label">CO2 emissions over time (total)</h2>
+                            <button id="right-button" type="button" class="btn btn-default module-button">Change to per capita</button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div id="co2" style="height: 42vh;"></div>
+                    <div class="row module-content">
+                        <div id="co2"></div>
                     </div>
                 </div>
 

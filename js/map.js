@@ -63,7 +63,7 @@ function map() {
     g = svg.append("g");
 
     //initialize tooltip
-    var tooltip = d3.select("body")
+    var tooltip = d3.select("#tooltips")
         .append("div")
         .attr("class", "tooltip");
 
@@ -116,6 +116,8 @@ function map() {
                 selFeature(d.properties.name);
             });
 
+        country.exit().remove();
+
         updateMode();
     };
 
@@ -136,9 +138,9 @@ function map() {
                         .style({opacity:'0.83'})
 
                     var countries = $.grep(CO2Data.CO2POP, function(c){ return c["Region/Country/Economy"] === d.properties.name; });
-                    var value = countries.length == 1 ? ", " + countries[0]["2008"] : "";
+                    var value = countries.length == 1 ? countries[0]["2008"] : "-";
 
-                    tooltip.text(d.properties.name + value);
+                    tooltip.text(d.properties.name + ", " + value);
                     tooltip.style("visibility", "visible");
             });
 
@@ -254,9 +256,10 @@ function map() {
             quantize = d3.scale.quantize()
                 .domain([-d3.max(CO2Data.CHANGE, function(d) { return Math.abs(d.value);}),
                          d3.max(CO2Data.CHANGE, function(d) { return Math.abs(d.value);})])
-                .range(divergingColors.reverse());
+                .range(reverseArray(divergingColors));
 
             $("#map-button").html("Change to CO2/capita");
+            $("#map-label").html("CO2 emissions rate of change");
             mode = "CO2 derivate";
             updateMode();
         }
@@ -272,6 +275,7 @@ function map() {
             .range(sequentialColors);
 
             $("#map-button").html("Change to rate of change");
+            $("#map-label").html("CO2 emissions 2008");
             mode = "CO2 per capita";
             updateMode();
         }

@@ -19,7 +19,7 @@ function area() {
     var areaDiv = $("#area");
 
     // width and height is based on container div size
-    var margin = {top: 20, right: 20, bottom: 40, left: 50},
+    var margin = {top: 10, right: 15, bottom: 35, left: 50},
         width = areaDiv.width() - margin.right - margin.left,
         height = areaDiv.height() - margin.top - margin.bottom;
 
@@ -38,7 +38,7 @@ function area() {
         .tickFormat(d3.format("s"));
 
     //initialize tooltip
-    var tooltip = d3.select("body")
+    var tooltip = d3.select("#tooltips")
         .append("div")
         .attr("class", "tooltip");
 
@@ -222,7 +222,7 @@ function area() {
         d3.select("#area svg").remove();
 
         // Add back button
-        $("#left-button").after('<button id="back-button" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> Back</button>')
+        $("#area-toolbar").append('<button id="back-button" type="button" class="btn btn-default module-button"><span class="glyphicon glyphicon-chevron-left"></span> Back</button>');
         $("#back-button").click(function() {
             draw(data);
         });
@@ -401,7 +401,7 @@ function area() {
             t.select(".y.aAxis").call(yAxis);
             t.select(".line").attr("d", valueline(CO2GDPData));
 
-        d3.select("rect").remove();
+        d3.select(".overlay").remove();
         svg.append("rect")
             .attr("class", "overlay")
             .attr("width", width)

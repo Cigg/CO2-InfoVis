@@ -262,13 +262,31 @@ body {
     /*font-size: 12px;*/
  }
 
-.title {
-    font-size: 1.05em;
-    font-weight: bold;
+.module {
+    height: 100%;
+    /*border: 1px solid #EEE;*/
 }
 
-.module {
-    /*border: 1px solid #EEE;*/
+.module-row {
+    height: 50%;
+}
+
+.module-content {
+    height: calc(100% - 53px);
+}
+
+.module-button {
+    position: absolute;
+    top: 16px;
+    left: 12px;
+}
+
+#pie, #map, #area, #co2 {
+    height: 100%;
+}
+
+.container-fluid {
+    height: calc(100% - 53px);
 }
 
 /* Needed for some reason. Cmon bootstrap */
@@ -277,8 +295,21 @@ body {
     margin-right: 0;
 }
 
-#toolbar {
-    padding: 6px;
+.toolbar {
+    padding-top: 8px;
+    height: 52px;
+}
+
+.toolbar h2 {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 8px;
+}
+
+#main-toolbar {
+    padding-left: 12px;
+    background-color: #333;
 }
 
 .toolbar-item {
@@ -307,10 +338,6 @@ polyline {
 .q6-9 { fill:rgb(33,113,181); }
 .q7-9 { fill:rgb(8,81,156); }
 .q8-9 { fill:rgb(8,48,107); }
-
-.module-toolbar {
-    padding-top: 10px;
-}
 
 #left-button {
     margin-right: 5px;

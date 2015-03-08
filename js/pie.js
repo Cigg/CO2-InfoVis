@@ -4,7 +4,7 @@
 function pie() {
   var pieDiv = $("#pie");
 
-  var margin = {top: 40, right: 120, bottom: 20, left: 120},
+  var margin = {top: 10, right: 120, bottom: 20, left: 120},
       width = pieDiv.width() - margin.right - margin.left,
       height = pieDiv.height() - margin.top - margin.bottom,
   	radius = Math.min(width, height) / 2;
@@ -40,15 +40,6 @@ function pie() {
   svg.append("g")
     .attr("class", "title");
 
-  // Title
-  var title = svg.select(".title")
-      .append("text")
-      .attr("x", 0)             
-      .attr("y", - height / 2 - 14)
-      .attr("text-anchor", "middle")  
-      .attr("class", "title")
-      .text("CO2 emissions by sector");
-
   this.selectCountry = function(country) {
     var countries = $.grep(CO2Data.SECTOR, function(c){ return c["Region/Country/Economy"] === country; });
 
@@ -63,8 +54,8 @@ function pie() {
     }
 
     var totalEmissions =  niceNumber(countryData["Electricity and heat production"]) + 
-                          niceNumber(countryData["Manuf. industries \nand construction"]) + 
-                          niceNumber(countryData["Other energy \nindustries**"]) +
+                          niceNumber(countryData["Manuf. industries and construction"]) + 
+                          niceNumber(countryData["Other energy industries**"]) +
                           niceNumber(countryData["Transport"]) +
                           niceNumber(countryData["Other sectors"]);
 
@@ -72,8 +63,8 @@ function pie() {
                     "value" : niceNumber(countryData["Electricity and heat production"]),
                     "percentage" :  Math.round(100*niceNumber(countryData["Electricity and heat production"])/totalEmissions) + "%"},
                   {"sector" : "Industries",
-                   "value" : niceNumber(countryData["Manuf. industries \nand construction"]) + niceNumber(countryData["Other energy \nindustries**"]),
-                   "percentage" : Math.round(100*(niceNumber(countryData["Manuf. industries \nand construction"]) +  niceNumber(countryData["Other energy \nindustries**"]))/totalEmissions) + "%"},
+                   "value" : niceNumber(countryData["Manuf. industries and construction"]) + niceNumber(countryData["Other energy industries**"]),
+                   "percentage" : Math.round(100*(niceNumber(countryData["Manuf. industries and construction"]) +  niceNumber(countryData["Other energy industries**"]))/totalEmissions) + "%"},
                   {"sector" : "Transport",
                    "value" : niceNumber(countryData["Transport"]),
                    "percentage" : Math.round(100*niceNumber(countryData["Transport"])/totalEmissions) + "%"},

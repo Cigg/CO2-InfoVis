@@ -76,19 +76,21 @@ function loadData(energyData, CO2Data, callback) {
 	});
 }
 
-function calcCO2delta(CO2Data) {
+function calcCO2change(CO2Data) {
 	var array = [];
 	var startYear = 2000;
 	var endYear = 2008;
-	for(country in CO2Data.CO2POP) {
-		var val = 0;
-		for(year = startYear; year <= endYear; year++) {
-			val += CO2Data.CO2POP[country]["2008"] - CO2Data.CO2POP[country]["2007"];
-		}
 
-		val /= endYear - startYear;
-		array.push({ country: CO2Data.CO2POP[country]["Region/Country/Economy"], 
-						 value: val});
+	for(country in CO2Data.CO2POP) {
+		// Do not include Trinidad and Tobago because they will get an extreme value and will make everyone else look "meh"
+		if(CO2Data.CO2POP[country]["Region/Country/Economy"] != "Trinidad and Tobago") {
+			var val = CO2Data.CO2POP[country][endYear] - CO2Data.CO2POP[country][startYear];
+			//val += (CO2Data.CO2POP[country][endYear] - CO2Data.CO2POP[country][endYear - 1])
+			//val /= 2;
+			val /= endYear - startYear;
+			array.push({ country: CO2Data.CO2POP[country]["Region/Country/Economy"], 
+					 value: val});
+		}
 	}
 
 	CO2Data.CHANGE = array;
