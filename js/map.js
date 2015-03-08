@@ -136,9 +136,9 @@ function map() {
                         .style({opacity:'0.83'})
 
                     var countries = $.grep(CO2Data.CO2POP, function(c){ return c["Region/Country/Economy"] === d.properties.name; });
-                    var value = countries.length == 1 ? countries[0]["2008"] : "-";
+                    var value = countries.length == 1 ? ", " + countries[0]["2008"] : "";
 
-                    tooltip.text(d.properties.name + ", " + value);
+                    tooltip.text(d.properties.name + value);
                     tooltip.style("visibility", "visible");
             });
 
