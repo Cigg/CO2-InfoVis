@@ -196,7 +196,9 @@ function map() {
                     var countries = $.grep(CO2Data.CHANGE, function(c){ return c["country"] === d.properties.name; });
                     var value = countries.length == 1 ? countries[0]["value"] : "-";
 
-                    tooltip.text(d.properties.name + ", " + value);
+                    var string = d.properties.name;
+                    string += parseFloat(Math.round(value * 100) / 100) ? ", " + parseFloat(Math.round(value * 100) / 100).toFixed(2) : "";
+                    tooltip.text(string);
                     tooltip.style("visibility", "visible");
                 });
 
