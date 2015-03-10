@@ -97,7 +97,7 @@ function area() {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        var colors = d3.scale.category10();
+        var colors = d3.scale.ordinal().range(qualitativeColors2);
 
         // Returns a displayable format of the data
         var area = d3.svg.area()
