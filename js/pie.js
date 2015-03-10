@@ -4,7 +4,7 @@
 function pie() {
   var pieDiv = $("#pie");
 
-  var margin = {top: 10, right: 120, bottom: 20, left: 120},
+  var margin = {top: 15, right: 120, bottom: 20, left: 120},
       width = pieDiv.width() - margin.right - margin.left,
       height = pieDiv.height() - margin.top - margin.bottom,
   	radius = Math.min(width, height) / 2;
