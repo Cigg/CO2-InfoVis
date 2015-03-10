@@ -363,6 +363,10 @@ rect {
     stroke-width: 2;
 }
 
+#map-button {
+    top: 10px;
+}
+
 /* ==========================================================================
    For the area view
    ========================================================================== */
@@ -387,6 +391,7 @@ div.tooltip {
     box-shadow: 0px 0px 2px 0px #a6a6a6;
     opacity: 0.9;
     position: absolute;
+    visibility: hidden;
 }
 
 .area {
