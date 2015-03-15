@@ -15,10 +15,6 @@ $("#clear-button").click(function() {
 	clearSelection();
 });
 
-$("#left-button").click(function() {
-	area.changeMode();
-});
-
 $("#right-button").click(function() {
 	CO2.changeMode();
 });
