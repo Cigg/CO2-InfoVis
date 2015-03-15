@@ -81,16 +81,27 @@ function calcCO2change(CO2Data) {
 	var startYear = 2000;
 	var endYear = 2008;
 
+	// Calculate slope of best fitted line using least squares
 	for(country in CO2Data.CO2POP) {
-		// Do not include Trinidad and Tobago because they will get an extreme value and will make everyone else look "meh"
+		var sumX = 0;
+		var sumY = 0;
+		var sumXY = 0;
+		var sumXX = 0;
+		var n = 0;
 		if(CO2Data.CO2POP[country]["Region/Country/Economy"] != "Trinidad and Tobago") {
-			var val = CO2Data.CO2POP[country][endYear] - CO2Data.CO2POP[country][startYear];
-			//val += (CO2Data.CO2POP[country][endYear] - CO2Data.CO2POP[country][endYear - 1])
-			//val /= 2;
-			val /= endYear - startYear;
-			array.push({ country: CO2Data.CO2POP[country]["Region/Country/Economy"], 
-					 value: val});
+			for(year = startYear; year <= endYear; year++) {
+				sumX += year;
+				sumY += parseFloat(CO2Data.CO2POP[country][year]);
+				sumXY += (year*CO2Data.CO2POP[country][year]);
+				sumXX += (year*year);
+				n++;
+			}
 		}
+		
+		var slope = (n*sumXY - sumX*sumY) / (n*sumXX - sumX*sumX);
+
+		array.push({ country: CO2Data.CO2POP[country]["Region/Country/Economy"], 
+			 value: slope});
 	}
 
 	CO2Data.CHANGE = array;
